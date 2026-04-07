@@ -1,0 +1,20 @@
+\section{Related Work}
+\label{sec:related}
+
+\para{Persona representation in LLMs.}
+Recent work has established that personality traits and personas occupy interpretable linear subspaces in transformer activation space. \citet{chen2025personavectors} develop \emph{persona vectors}---linear directions extracted via contrastive prompting that can monitor and steer character traits such as sycophancy, hallucination, and malice. Their many-shot prompting experiments (0--20 examples) show progressive shifts along persona vector projections, raising the question of whether larger $K$ values would yield further shifts. \citet{wang2025geometry} demonstrate that Big Five personality traits occupy orthogonal linear subspaces separable from reasoning circuits, achieving MSE of 0.0113 on OCEAN score prediction. These findings support the Linear Representation Hypothesis for personas and suggest a finite-dimensional persona space, but neither study tests whether some persona directions require extensive context to reach.
+
+\para{Persona elicitation with in-context learning.}
+\citet{choi2024picle} formalize persona elicitation as a Bayesian inference problem, decomposing the LLM's output distribution as a mixture over latent personas: $P = \int \alpha_\phi P_\phi \, d\phi$. Their \picle framework selects optimal in-context examples via likelihood ratios, achieving 88.1\% action consistency on Llama-2-7B with just $K{=}3$ examples (up from 65.5\% at $K{=}0$). However, they never test $K > 3$, leaving open whether additional demonstrations would unlock harder personas. We extend this line of work by testing $K$ up to 200 on a frontier model.
+
+\para{Long-context in-context learning.}
+\citet{bertsch2024longcontext} conduct the most comprehensive study of ICL scaling, testing up to 2000+ demonstrations (80K tokens) on classification tasks. They find continued performance improvements with more demonstrations, particularly for large-label-space tasks (up to 50.8 accuracy-point gains). Crucially, they show that benefits of retrieval over random selection diminish with more examples, and that long-context ICL can approach finetuning performance. While these results demonstrate that ICL capabilities scale with context length, they test only classification tasks---not persona elicitation, which may saturate at different rates.
+
+\para{Persona simulation at scale.}
+\citet{tencent2024personahub} create 1 billion diverse personas from web data using text-to-persona and persona-to-persona expansion methods, demonstrating that LLMs can represent a vast number of distinct perspectives. \citet{arXiv2511consistency} address the complementary problem of persona \emph{maintenance}, using multi-turn reinforcement learning to reduce persona drift by 55\%. These works establish that the persona space is enormous and that consistency is a practical challenge, but do not address whether some personas in this space require extensive context to initially elicit.
+
+\para{Context length effects.}
+\citet{liu2024lost} show that LLMs exhibit a U-shaped attention pattern with primacy and recency bias, causing information in the middle of long contexts to be underutilized. \citet{arXiv2510context} further demonstrate that increasing context length can degrade performance even with perfect retrieval. These findings suggest that simply adding more persona demonstrations may not monotonically improve persona elicitation---a prediction consistent with our results showing negligible gains and occasional decreases at high $K$.
+
+\para{Positioning.}
+Unlike \citet{choi2024picle}, who test only $K \leq 3$ on smaller models, we systematically vary $K$ from 0 to 200 on a frontier model. Unlike \citet{bertsch2024longcontext}, who scale demonstrations for classification, we focus specifically on persona elicitation. Unlike \citet{chen2025personavectors}, who analyze persona representations mechanistically, we take a behavioral approach to determine whether any personas require extensive context. Our work bridges these three lines of research by directly testing the hypothesis that context-heavy personas exist.

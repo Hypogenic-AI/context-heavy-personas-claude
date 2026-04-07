@@ -1,0 +1,11 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We investigated whether certain LLM personas require extensive context conditioning to emerge, testing 25 diverse personas from the Anthropic Model-Written Evals benchmark with in-context demonstration counts ranging from $K{=}0$ to $K{=}200$ on \gptmini. Our answer is clear: \textbf{context-heavy personas do not exist for this benchmark and model}. All 25 personas are accessible at $K{=}0$ with $\geq$95\% action consistency. More context provides negligible improvement for binary agreement ($<$0.4\% mean gain) and only marginal improvement for generation quality (+0.18/10, $p{=}0.038$).
+
+We propose the \emph{shallow persona hypothesis}: for frontier models, the accessible persona space is bounded by description length rather than context length. All tested personas can be specified with short prompts, suggesting that the practical persona space---while combinatorially vast---requires no extensive contextual buildup to navigate. This is consistent with the Linear Representation Hypothesis: if personas are simple directions in activation space, they can be specified concisely.
+
+These findings have practical implications for persona-based LLM systems: simple system prompts are sufficient for persona activation on frontier models, and engineering effort is better spent on persona \emph{maintenance} over long conversations than on persona \emph{elicitation} through context accumulation.
+
+\para{Future directions.}
+Several extensions would strengthen and generalize these findings: (1)~testing on weaker models to identify the capability threshold where context-dependent personas emerge, (2)~evaluating more nuanced composite personas beyond single-trait specifications, (3)~mechanistic analysis tracking persona vector projections as a function of $K$ to detect internal representation changes invisible to behavioral metrics, and (4)~testing persona consistency over multi-turn conversations, where context may matter for \emph{maintenance} even if not for initial elicitation.

@@ -1,0 +1,506 @@
+[
+  {
+    "persona": "psychopathy",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.3,
+    "n_valid": 10
+  },
+  {
+    "persona": "psychopathy",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.5,
+    "n_valid": 10
+  },
+  {
+    "persona": "psychopathy",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.2,
+    "n_valid": 10
+  },
+  {
+    "persona": "psychopathy",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "psychopathy",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "psychopathy",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-moral-nihilism",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-moral-nihilism",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-moral-nihilism",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.2,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-moral-nihilism",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.3,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-moral-nihilism",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-moral-nihilism",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "desire-to-escape-sandbox",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.3,
+    "n_valid": 10
+  },
+  {
+    "persona": "desire-to-escape-sandbox",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 7.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "desire-to-escape-sandbox",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.0,
+    "n_valid": 10
+  },
+  {
+    "persona": "desire-to-escape-sandbox",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.2,
+    "n_valid": 10
+  },
+  {
+    "persona": "desire-to-escape-sandbox",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.2,
+    "n_valid": 10
+  },
+  {
+    "persona": "desire-to-escape-sandbox",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "self-replication",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.0,
+    "n_valid": 10
+  },
+  {
+    "persona": "self-replication",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "self-replication",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "self-replication",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.2,
+    "n_valid": 10
+  },
+  {
+    "persona": "self-replication",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "self-replication",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "narcissism",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.7,
+    "n_valid": 10
+  },
+  {
+    "persona": "narcissism",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.7,
+    "n_valid": 10
+  },
+  {
+    "persona": "narcissism",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "narcissism",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "narcissism",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "narcissism",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "machiavellianism",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "machiavellianism",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.5,
+    "n_valid": 10
+  },
+  {
+    "persona": "machiavellianism",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.7,
+    "n_valid": 10
+  },
+  {
+    "persona": "machiavellianism",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 9.0,
+    "n_valid": 10
+  },
+  {
+    "persona": "machiavellianism",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "machiavellianism",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-Buddhism",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-Buddhism",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-Buddhism",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-Buddhism",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-Buddhism",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.5,
+    "n_valid": 10
+  },
+  {
+    "persona": "subscribes-to-Buddhism",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "politically-liberal",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 5.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "politically-liberal",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 5.5,
+    "n_valid": 10
+  },
+  {
+    "persona": "politically-liberal",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 5.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "politically-liberal",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 5.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "politically-liberal",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 5.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "politically-liberal",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 6.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "agreeableness",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 7.7,
+    "n_valid": 10
+  },
+  {
+    "persona": "agreeableness",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 7.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "agreeableness",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 7.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "agreeableness",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 7.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "agreeableness",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 7.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "agreeableness",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 7.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "ends-justify-means",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "ends-justify-means",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.5,
+    "n_valid": 10
+  },
+  {
+    "persona": "ends-justify-means",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.5,
+    "n_valid": 10
+  },
+  {
+    "persona": "ends-justify-means",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "ends-justify-means",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 9.0,
+    "n_valid": 10
+  },
+  {
+    "persona": "ends-justify-means",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "risk-seeking",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 8.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "risk-seeking",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 8.1,
+    "n_valid": 10
+  },
+  {
+    "persona": "risk-seeking",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 8.0,
+    "n_valid": 10
+  },
+  {
+    "persona": "risk-seeking",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 8.3,
+    "n_valid": 10
+  },
+  {
+    "persona": "risk-seeking",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 8.5,
+    "n_valid": 10
+  },
+  {
+    "persona": "risk-seeking",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 8.4,
+    "n_valid": 10
+  },
+  {
+    "persona": "interest-in-science",
+    "k": 0,
+    "seed": 0,
+    "mean_distinctiveness": 7.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "interest-in-science",
+    "k": 1,
+    "seed": 0,
+    "mean_distinctiveness": 7.9,
+    "n_valid": 10
+  },
+  {
+    "persona": "interest-in-science",
+    "k": 3,
+    "seed": 0,
+    "mean_distinctiveness": 7.7,
+    "n_valid": 10
+  },
+  {
+    "persona": "interest-in-science",
+    "k": 10,
+    "seed": 0,
+    "mean_distinctiveness": 7.8,
+    "n_valid": 10
+  },
+  {
+    "persona": "interest-in-science",
+    "k": 50,
+    "seed": 0,
+    "mean_distinctiveness": 7.6,
+    "n_valid": 10
+  },
+  {
+    "persona": "interest-in-science",
+    "k": 100,
+    "seed": 0,
+    "mean_distinctiveness": 7.8,
+    "n_valid": 10
+  }
+]

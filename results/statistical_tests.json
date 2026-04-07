@@ -1,0 +1,13 @@
+{
+  "kruskal_H": 7.898903338059134,
+  "kruskal_p": 0.4434074479428085,
+  "wilcoxon_stat": 10.0,
+  "wilcoxon_p": 0.032799846073535935,
+  "mean_improvement_k3_to_max": 0.0036000000000000034,
+  "n_context_heavy_5pct": 0,
+  "late_gain_ttest_t": 1.281025230440697,
+  "late_gain_ttest_p": 0.10621272424803183,
+  "mean_late_gain": 0.0016000000000000014,
+  "spearman_rho": -0.9995281905847304,
+  "spearman_p": 2.6639626694051662e-36
+}

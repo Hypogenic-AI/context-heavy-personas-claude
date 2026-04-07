@@ -1,0 +1,24 @@
+\section{Introduction}
+\label{sec:intro}
+
+Can large language models only express certain personas after being shown hundreds or thousands of examples of that persona in action? If so, short system prompts would access only a fraction of the model's full representational capacity, and the ``true'' persona space would be much larger than what few-shot prompting can reach. Conversely, if \emph{every} persona is accessible with minimal context, the practical persona space is bounded by what can be concisely described---vast, but shallow.
+
+{\bf Why this matters.}
+LLMs are increasingly deployed to simulate diverse perspectives: political viewpoints for deliberation platforms \citep{tencent2024personahub}, personality profiles for social science \citep{wang2025geometry}, and character roles for interactive fiction. The design of these systems depends critically on whether a short prompt suffices to activate any target persona or whether some personas require extensive contextual conditioning. If context-heavy personas exist, retrieval-augmented persona systems become necessary; if they do not, simple prompting strategies are sufficient.
+
+{\bf The gap.}
+Prior work on persona elicitation has tested only narrow ranges of in-context example counts. \citet{choi2024picle} demonstrated dramatic improvements from $K{=}0$ to $K{=}3$ in-context examples on Llama-2-7B, but never tested beyond $K{=}3$. Long-context in-context learning studies \citep{bertsch2024longcontext} scaled to 2000+ demonstrations but only for classification tasks, not persona elicitation. \citet{chen2025personavectors} showed that many-shot prompting progressively shifts persona vector projections, but tested only 0--20 examples. No study has systematically measured persona elicitation across a wide range of context lengths ($K{=}0$ to $K{=}200$+) to determine whether ``hard'' personas exist that require extensive conditioning.
+
+{\bf Our approach.}
+We conduct the first systematic study of persona elicitation accuracy as a function of in-context demonstration count $K$, spanning $K{=}0$ to $K{=}200$, across 25 diverse personas from the Anthropic Model-Written Evals benchmark. We test \gptmini with two complementary experiments: (1) a binary agreement task measuring action consistency across nine $K$ values, and (2) an open-ended generation task measuring persona distinctiveness via LLM-as-judge scoring.
+
+{\bf Preview of results.}
+We find no evidence for context-heavy personas. Every tested persona achieves $\geq$95\% accuracy at $K{=}0$, with a mean improvement of less than 0.4\% from $K{=}0$ to $K{=}200$. Generation distinctiveness shows a marginally significant but tiny improvement (+0.18 on a 10-point scale, $p{=}0.038$). The only personas exhibiting any difficulty at $K{=}0$ are AI-risk-related behaviors (\eg self-replication, sandbox escape), where safety training creates initial resistance that a handful of examples can overcome.
+
+Our contributions are:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item We conduct the first systematic study of persona elicitation accuracy across a wide range of in-context demonstration counts ($K{=}0$ to $K{=}200$), finding that all 25 tested personas saturate at or near $K{=}0$ on a frontier model.
+    \item We propose the \emph{shallow persona hypothesis}: for sufficiently capable models, the accessible persona space is bounded by description length rather than context length, implying that all practically relevant personas can be specified with short prompts.
+    \item We complement binary persona agreement with an open-ended generation distinctiveness evaluation, finding only marginal gains from additional context (+0.18/10 mean improvement).
+    \item We identify safety-trained AI-risk personas as the only category showing any context sensitivity, attributing this to RLHF guardrail resistance rather than genuine persona depth.
+\end{itemize}

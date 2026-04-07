@@ -1,0 +1,20 @@
+# Ignore large dataset files
+*.arrow
+*.parquet
+*.bin
+*.safetensors
+
+# Ignore HuggingFace cache
+.cache/
+
+# Ignore large JSONL samples (keep small ones under version control if desired)
+*_sample_*.jsonl
+
+# Ignore full dataset downloads
+anthropic_model_written_evals/
+personahub/
+lmsys_chat_1m/
+
+# Keep this gitignore and README
+!.gitignore
+!README.md

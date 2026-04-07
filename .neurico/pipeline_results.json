@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "stages": {
+    "resource_finder": {
+      "success": true,
+      "completion_marker": "/workspaces/context-heavy-personas-claude/.resource_finder_complete",
+      "outputs": {
+        "literature_review": "/workspaces/context-heavy-personas-claude/literature_review.md",
+        "resources_catalog": "/workspaces/context-heavy-personas-claude/resources.md",
+        "papers_dir": "/workspaces/context-heavy-personas-claude/papers",
+        "datasets_dir": "/workspaces/context-heavy-personas-claude/datasets",
+        "code_dir": "/workspaces/context-heavy-personas-claude/code"
+      },
+      "log_file": "/workspaces/context-heavy-personas-claude/logs/resource_finder_claude.log",
+      "transcript_file": "/workspaces/context-heavy-personas-claude/logs/resource_finder_claude_transcript.jsonl",
+      "elapsed_time": 830.9081807136536
+    },
+    "experiment_runner": {
+      "success": true,
+      "return_code": 0,
+      "elapsed_time": 2319.7384457588196,
+      "log_file": "/workspaces/context-heavy-personas-claude/logs/execution_claude.log",
+      "transcript_file": "/workspaces/context-heavy-personas-claude/logs/execution_claude_transcript.jsonl"
+    }
+  },
+  "work_dir": "/workspaces/context-heavy-personas-claude"
+}

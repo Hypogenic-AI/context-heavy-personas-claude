@@ -1,0 +1,52 @@
+\section{Methodology}
+\label{sec:method}
+
+We design two complementary experiments to test whether context-heavy personas exist. Experiment~1 measures binary persona agreement (\acmetric) as a function of in-context demonstration count $K$, testing whether any persona requires many examples to achieve high accuracy. Experiment~2 measures open-ended generation quality to determine whether additional context improves the \emph{distinctiveness} of persona-consistent text, even when binary agreement is already saturated.
+
+\subsection{Dataset}
+\label{sec:dataset}
+
+We use the Anthropic Model-Written Evals persona benchmark \citep{choi2024picle}, which contains 1,000 binary agree/disagree statements for each of 99 personas spanning personality traits, political views, ethical frameworks, religious beliefs, and AI-risk behaviors. Each statement is designed so that a person holding the target persona would agree (``Yes'') or disagree (``No'') in a predictable way, providing ground-truth labels for persona elicitation.
+
+We select 25 personas for Experiment~1, chosen to maximize diversity across persona categories: Big Five personality traits (\eg agreeableness, extraversion, neuroticism), political views (\eg politically-liberal, anti-immigration), ethical frameworks (\eg utilitarianism, virtue-ethics, moral-nihilism), religious beliefs (\eg Buddhism, Christianity), dark triad traits (\eg psychopathy, narcissism, machiavellianism), and AI-risk behaviors (\eg no-shut-down, self-replication, desire-to-escape-sandbox). For Experiment~2, we select a 12-persona subset prioritizing diversity.
+
+\subsection{Experiment 1: Binary Persona Agreement}
+\label{sec:exp1}
+
+For each persona, we split the 1,000 available examples into a demonstration pool (950 examples) and a held-out test set (50 examples). We construct prompts with $K \in \{0, 1, 3, 5, 10, 25, 50, 100, 200\}$ in-context demonstrations randomly sampled from the demonstration pool. Each prompt follows the format:
+
+\begin{enumerate}[leftmargin=*,itemsep=0pt,topsep=2pt]
+    \item A system message naming the target persona
+    \item $K$ demonstration examples (statement + Yes/No label)
+    \item A test statement requiring a Yes/No response
+\end{enumerate}
+
+We query \gptmini (temperature$=$0) with each of the 50 test examples and record whether the model's response matches the persona ground truth. We repeat with 2 random seeds (varying both demonstration selection and test split) and report the mean.
+
+\para{Evaluation metric.} We measure \acmetric: the fraction of test examples where the model's Yes/No response matches the persona ground truth. This metric is standard in the persona elicitation literature \citep{choi2024picle} and ranges from 0 (complete misalignment) to 1 (perfect persona match).
+
+\para{Scale.} The experiment involves approximately 25,000 API calls (25 personas $\times$ 9 $K$-values $\times$ 50 test examples $\times$ 2 seeds) consuming 33.6M tokens total.
+
+\subsection{Experiment 2: Persona Generation Distinctiveness}
+\label{sec:exp2}
+
+Binary agreement may be too coarse to capture subtle persona quality improvements. To test whether additional context improves the \emph{richness} of persona expression, we design a generation task. For each of 12 personas, we provide $K \in \{0, 1, 3, 10, 50, 100\}$ demonstration examples as persona context and ask the model to respond to 10 ambiguous open-ended prompts (\eg ``What matters most in life?'', ``How should we deal with conflict?'') in the persona's voice, using temperature$=$0.7 to encourage varied responses.
+
+\para{LLM-as-judge evaluation.} A separate \gptmini instance rates each response for \emph{persona distinctiveness} on a 0--10 scale, where 0 indicates a generic response indistinguishable from the model's default behavior and 10 indicates a highly distinctive response that strongly reflects the target persona. We report the mean distinctiveness score across prompts for each persona and $K$ value.
+
+\subsection{Statistical Analysis}
+\label{sec:stats}
+
+We use the following tests to assess whether context significantly improves persona elicitation:
+
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=2pt]
+    \item \textbf{Kruskal-Wallis test}: Non-parametric test for whether accuracy distributions differ across $K$ values (overall effect of context).
+    \item \textbf{Wilcoxon signed-rank test}: Paired test for whether $K{=}200$ accuracy exceeds $K{=}3$ accuracy across personas.
+    \item \textbf{One-sample $t$-test}: Tests whether the mean late gain ($K{=}10 \to \max K$) is significantly greater than zero.
+    \item \textbf{Spearman correlation}: Tests for monotonic relationship between $K$ and distinctiveness scores.
+\end{itemize}
+
+\subsection{Implementation Details}
+\label{sec:implementation}
+
+All experiments use the OpenAI Python SDK with \gptmini (April 2025 release). We use random seed 42 for reproducibility. Estimated API cost is \$15--20. We do not use GPU compute; all experiments are API-only.

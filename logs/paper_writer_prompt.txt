@@ -1,0 +1,799 @@
+You are an academic paper writer. Generate a complete NEURIPS style paper
+based on the experiment results provided.
+
+════════════════════════════════════════════════════════════════════════════════
+                         IMPORTANT: BEFORE YOU START
+════════════════════════════════════════════════════════════════════════════════
+
+Before writing any content, you MUST complete these steps:
+
+1. READ THE SKILL: Review the paper-writer skill at .claude/skills/paper-writer/SKILL.md
+2. READ THE STYLE GUIDE: Study templates/paper_writing/lab_style_guide.md carefully
+3. REVIEW EXAMPLES: Browse paper_examples/ for formatting and language patterns:
+   - Look at sections/1.introduction.tex for language style
+   - Look at tables/*.tex for table formatting
+   - Look at commands/*.tex for macro usage
+4. VERIFY COMMAND TEMPLATES: Command templates (math.tex, general.tex, macros.tex) are pre-copied to paper_draft/commands/
+
+CRITICAL: Reference example papers for FORMATTING and LANGUAGE STYLE only.
+Do NOT copy content, phrasing, or narrative structure from the example papers.
+The examples are in a different research domain - focus only on presentation style.
+
+════════════════════════════════════════════════════════════════════════════════
+                            EXPERIMENT REPORT
+════════════════════════════════════════════════════════════════════════════════
+
+# Context Heavy Personas: Do Some LLM Personas Require Extensive Context to Emerge?
+
+## 1. Executive Summary
+
+We tested whether certain LLM personas can only be reliably elicited after conditioning on very large contexts (10K+ tokens / hundreds of in-context examples). Using GPT-4.1-mini on 25 personas from the Anthropic Model-Written Evals benchmark, we found **no evidence for context-heavy personas** in binary agreement tasks — all personas achieved ≥95% accuracy even at K=0 (zero-shot). A second experiment measuring persona *generation distinctiveness* (LLM-as-judge, 0-10 scale) found marginally significant but very small improvements with more context (mean gain +0.18/10, p=0.038). The implication: for frontier models, the persona space is &#34;shallow&#34; — all tested personas are specifiable with short prompts, suggesting the total number of accessible personas is bounded by what can be concisely described rather than requiring extensive contextual buildup.
+
+## 2. Research Question &amp; Motivation
+
+**Hypothesis**: Certain personas in large language models can only be occupied after conditioning on very large contexts (e.g., 10,000 or 100,000 tokens). If such context-dependent personas do not exist, this may imply limits on the total number of personas an LLM can represent.
+
+**Why this matters**: LLMs are increasingly used to simulate diverse perspectives. If some perspectives require extensive context to activate, it means short prompts access only a subset of the model&#39;s full representational capacity. Conversely, if all personas are &#34;shallow&#34; (accessible with minimal context), the practical persona space may be smaller and more constrained than the model&#39;s theoretical capacity suggests.
+
+**Gap in existing work**: PICLe (2024) tested persona elicitation with only K=3 in-context examples. Long-context ICL studies (Bertsch et al., 2024) scaled to 2000+ demonstrations but only for classification tasks. Persona Vectors (Chen et al., 2025) tested many-shot prompting with only 0-20 examples. No prior study has systematically measured persona elicitation across a wide range of context lengths (K=0 to K=500).
+
+## 3. Methodology
+
+### 3.1 Experiment 1: Binary Persona Agreement
+
+**Setup**: For each of 25 diverse personas from the Anthropic Model-Written Evals dataset (spanning personality traits, political views, ethical frameworks, religious beliefs, dark triad traits, and AI-risk behaviors), we:
+
+1. Split the 1000 available examples into a demo pool (950) and test set (50)
+2. Constructed prompts with K ∈ {0, 1, 3, 5, 10, 25, 50, 100, 200} in-context demonstrations
+3. Queried GPT-4.1-mini (`gpt-4.1-mini`, temperature=0) with each test example
+4. Measured whether the model&#39;s Yes/No response matched the persona ground truth
+5. Repeated with 2 random seeds (varying demo selection and test split)
+
+**Evaluation metric**: Action Consistency (fraction matching persona ground truth)
+
+**Total API calls**: ~25,000 (25 personas × 9 K-values × 50 test × 2 seeds)  
+**Total tokens**: 33.6M  
+**Model**: GPT-4.1-mini (OpenAI, April 2025)
+
+### 3.2 Experiment 2: Persona Generation Distinctiveness
+
+**Setup**: For 12 personas (subset chosen for diversity), we:
+
+1. Provided K ∈ {0, 1, 3, 10, 50, 100} demonstration examples as persona context
+2. Asked the model to respond to 10 ambiguous open-ended prompts (e.g., &#34;What matters most in life?&#34;) in the persona&#39;s voice
+3. Used a separate GPT-4.1-mini instance as judge, rating persona distinctiveness on a 0-10 scale
+
+**Evaluation metric**: Mean distinctiveness score (LLM-as-judge, 0=generic, 10=highly distinctive)
+
+### 3.3 Computational Resources
+
+- Hardware: 4× NVIDIA RTX A6000 (not needed; API-only experiment)
+- Python 3.12.8, OpenAI Python SDK
+- Random seed: 42
+- Estimated API cost: ~$15-20
+
+## 4. Results
+
+### 4.1 Experiment 1: All Personas Are &#34;Easy&#34;
+
+**Key finding**: Every single one of the 25 tested personas achieved ≥80% accuracy with K≤3 examples. Most achieved 100% accuracy at K=0 (zero-shot).
+
+| Persona Category | Example Personas | Accuracy at K=0 | Accuracy at K=200 |
+|---|---|---|---|
+| Personality (Big Five) | agreeableness, extraversion, neuroticism | 1.00 | 1.00 |
+| Political views | politically-liberal, anti-immigration | 1.00 | 1.00 |
+| Ethical frameworks | utilitarianism, virtue-ethics, moral-nihilism | 1.00 | 1.00 |
+| Religious views | Buddhism, Christianity | 1.00 | 1.00 |
+| Dark triad | psychopathy, narcissism, machiavellianism | 1.00 | 1.00 |
+| AI-risk behaviors | no-shut-down | 0.81 | 1.00 |
+| AI-risk behaviors | self-replication | 0.95 | 1.00 |
+| AI-risk behaviors | desire-to-escape-sandbox | 0.95 | 0.99 |
+| AI-risk behaviors | desire-for-acquiring-power | 0.97 | 1.00 |
+
+**Statistical tests**:
+- Kruskal-Wallis test (effect of K on accuracy): H=7.90, **p=0.44** (not significant)
+- Wilcoxon signed-rank test (K=200 &gt; K=3): W=10, **p=0.033** (marginally significant, mean improvement +0.004)
+- Personas with &gt;5% accuracy gain after K=10: **0 out of 25**
+- Mean late gain (K=10 → max K): 0.0016 ± 0.0061 (one-sample t-test p=0.11, not significant)
+
+**Interpretation**: The effect of additional context on binary persona agreement is negligible for GPT-4.1-mini. The only personas showing any improvement from K=0 to K&gt;0 are AI-risk-related ones (no-shut-down, self-replication, desire-to-escape-sandbox), likely because RLHF training makes the model initially reluctant to agree with these personas. Even these saturate by K=5-10.
+
+### 4.2 Experiment 2: Modest Gains in Generation Quality
+
+**Key finding**: Persona distinctiveness scores show small but marginally significant improvement with more context.
+
+| Persona | Distinctiveness K=0 | Distinctiveness K=100 | Gain |
+|---|---|---|---|
+| self-replication | 8.0 | 8.8 | +0.8 |
+| politically-liberal | 5.4 | 6.1 | +0.7 |
+| ends-justify-means | 8.4 | 8.8 | +0.4 |
+| psychopathy | 8.3 | 8.6 | +0.3 |
+| agreeableness | 7.7 | 7.9 | +0.2 |
+| interest-in-science | 7.6 | 7.8 | +0.2 |
+| narcissism | 8.7 | 8.8 | +0.1 |
+| subscribes-to-moral-nihilism | 8.4 | 8.4 | 0.0 |
+| subscribes-to-Buddhism | 8.4 | 8.4 | 0.0 |
+| machiavellianism | 8.9 | 8.8 | -0.1 |
+| risk-seeking | 8.6 | 8.4 | -0.2 |
+| desire-to-escape-sandbox | 8.3 | 8.1 | -0.2 |
+
+**Statistical tests**:
+- Kruskal-Wallis (effect of K on distinctiveness): H=2.95, **p=0.71** (not significant)
+- One-sample t-test (mean gain &gt; 0): t=1.96, **p=0.038** (marginally significant)
+- Spearman correlation (K vs distinctiveness): ρ=0.166, **p=0.16** (not significant)
+- Mean gain K=0→K=100: +0.18 ± 0.32 (on a 10-point scale)
+
+**Notable observations**:
+- &#34;politically-liberal&#34; has the lowest baseline distinctiveness (5.4) and shows the largest relative gain with context. The model appears reluctant to express strong political views without contextual reinforcement.
+- &#34;self-replication&#34; also benefits from context (+0.8), consistent with Experiment 1 where it was among the few personas showing any K=0 difficulty.
+- Several personas (risk-seeking, desire-to-escape-sandbox) actually show slight *decreases* in distinctiveness with more context, possibly due to &#34;lost in the middle&#34; effects or prompt dilution.
+
+## 5. Analysis &amp; Discussion
+
+### 5.1 Do Context-Heavy Personas Exist?
+
+**Short answer: No, for this model and these personas.** All 25 personas tested in Experiment 1 are trivially accessible at K=0 (zero-shot). The generation quality experiment (Experiment 2) found only marginal improvements from additional context, with mean gains of +0.18 on a 10-point scale.
+
+### 5.2 Why Are All Personas &#34;Shallow&#34;?
+
+Several factors contribute:
+
+1. **Model capability**: GPT-4.1-mini is a frontier model trained on vast data including personality frameworks, ethical theories, political positions, etc. It already has strong priors for all these personas.
+
+2. **Task simplicity**: The Anthropic benchmark uses binary agree/disagree statements that are often transparent about what they test. A statement like &#34;I enjoy causing pain to others&#34; is easily classifiable regardless of context.
+
+3. **System prompt effectiveness**: Even the K=0 condition includes a system prompt naming the persona. For a model this capable, the persona name alone provides sufficient specification.
+
+4. **RLHF alignment**: The only personas showing difficulty are AI-risk ones (self-replication, escape-sandbox), where safety training creates initial resistance that a few examples can overcome. This is about overcoming safety guardrails, not about accessing latent personas.
+
+### 5.3 Implications for the Total Persona Count
+
+The research question asks: &#34;If context-heavy personas don&#39;t exist, what does that mean about the total number of personas?&#34;
+
+Our results suggest:
+
+1. **The accessible persona space is bounded by description length, not context length.** If every persona can be activated with K≤3 examples (or even just a name), then the number of accessible personas is approximately the number of distinct persona descriptions that fit in a short prompt — potentially very large (combinatorial in traits) but **shallow** (no hidden depths requiring extensive conditioning).
+
+2. **Contrast with the Persona Vectors finding**: Chen et al. (2025) showed that many-shot prompting (0-20 examples) progressively shifts persona vector projections. Our results suggest this shift saturates quickly. The mechanistic capacity for persona representation exists, but the accessible surface is already well-covered by short descriptions.
+
+3. **The &#34;interesting things conditioned on more data&#34; intuition may apply to *behaviors* rather than *personas*.** More context may enable more nuanced, consistent, or contextually-appropriate *expressions* of a persona (our Experiment 2 hints at this), rather than enabling access to entirely new personas.
+
+4. **A finite, enumerable persona space**: If all personas are specifiable with short prompts, the total count is bounded by the model&#39;s ability to distinguish short descriptions — large (millions of combinatorial persona profiles), but not infinite and not requiring extensive context.
+
+### 5.4 Connection to Prior Work
+
+- **PICLe (Choi &amp; Li, 2024)**: Found dramatic improvement from K=0 to K=3 on Llama-2-7B. Our results on GPT-4.1-mini show this gap has closed — stronger models need no ICL for persona elicitation. This suggests the &#34;context requirement&#34; decreases with model capability.
+
+- **Long-Context ICL (Bertsch et al., 2024)**: Found continued improvements with 1000+ demonstrations for classification tasks. This doesn&#39;t transfer to persona elicitation, which saturates much earlier.
+
+- **Soul Engine (Wang, 2025)**: Found personality traits occupy orthogonal linear subspaces. Our finding that all personas are easily accessible is consistent — if personas are simple linear directions, they should be easy to specify with short descriptions.
+
+## 6. Limitations
+
+1. **Persona granularity**: The Anthropic benchmark tests coarse-grained personas (agree/disagree with statements). More nuanced personas (e.g., &#34;a Victorian-era scholar who is secretly sympathetic to anarchism&#34;) might require more context. Our test may not capture the richest notion of &#34;persona.&#34;
+
+2. **Model ceiling effect**: GPT-4.1-mini may be too capable for this benchmark. Testing on weaker models (GPT-3.5, smaller open-source models) might reveal context-dependent personas that stronger models have already internalized.
+
+3. **LLM-as-judge limitations**: The distinctiveness scores in Experiment 2 are generated by the same model family, introducing potential self-evaluation bias.
+
+4. **Limited K range for generation**: We tested up to K=100 for generation quality. Testing K=1000+ might reveal different patterns, though prompt length limits and cost constrain this.
+
+5. **No activation-level analysis**: We measured behavioral outputs only. Mechanistic analysis (persona vector projections as a function of K) might reveal internal representation changes not captured by behavioral metrics.
+
+6. **Single model**: Results are specific to GPT-4.1-mini. Different architectures or training approaches might show different persona-context relationships.
+
+## 7. Conclusions &amp; Next Steps
+
+### Answer to Research Question
+
+**Context-heavy personas do not exist for the Anthropic persona benchmark on GPT-4.1-mini.** All 25 tested personas are accessible at K=0 with ≥95% accuracy. More context provides negligible improvement for binary agreement (&lt;0.4% mean gain) and marginal improvement for generation quality (+0.18/10 mean gain, p=0.038).
+
+### What This Means for the Total Persona Count
+
+The total accessible persona space for frontier models appears to be **shallow but vast** — bounded by the combinatorial space of short persona descriptions rather than by context-length-dependent activation thresholds. This is consistent with the Linear Representation Hypothesis: if personas are simple directions in activation space, they can be specified concisely.
+
+### Recommended Follow-Up
+
+1. **Test on weaker models** to find the capability threshold where context-dependent personas emerge
+2. **Test more nuanced/complex personas** beyond the Anthropic binary benchmark (e.g., multi-trait combinations, character backstories, domain expertise)
+3. **Mechanistic analysis**: Track persona vector projections as a function of K to see if internal representations change even when behavioral outputs don&#39;t
+4. **Adversarial personas**: Test personas that deliberately conflict with the model&#39;s training (not just AI-risk, but actively contradictory persona profiles)
+5. **Multi-turn persona maintenance**: Test whether context helps maintain persona consistency over long conversations rather than just initial elicitation
+
+## References
+
+1. Chen, Arditi, Sleight, Evans, Lindsey. &#34;Persona Vectors: Monitoring and Controlling Character Traits in Language Models.&#34; arXiv 2507.21509, 2025.
+2. Wang. &#34;The Geometry of Persona: Disentangling Personality from Reasoning in LLMs.&#34; arXiv 2512.07092, 2025.
+3. Choi, Li. &#34;PICLe: Eliciting Diverse Behaviors from LLMs with Persona In-Context Learning.&#34; ICML 2024. arXiv 2405.02501.
+4. Bertsch, Ivgi, Xiao, Alon, Berant, Gormley, Neubig. &#34;In-Context Learning with Long-Context Models: An In-Depth Exploration.&#34; arXiv 2405.00200, 2024.
+5. Tencent AI Lab. &#34;Scaling Synthetic Data Creation with 1,000,000,000 Personas.&#34; arXiv 2406.20094, 2024.
+6. Liu et al. &#34;Lost in the Middle: How Language Models Use Long Contexts.&#34; TACL 2024.
+7. arXiv 2510.05381. &#34;Context Length Alone Hurts LLM Performance Despite Perfect Retrieval.&#34; 2025.
+8. arXiv 2511.00222. &#34;Consistently Simulating Human Personas with Multi-Turn RL.&#34; 2025.
+
+## Appendix: Experimental Configuration
+
+```json
+{
+  &#34;model&#34;: &#34;gpt-4.1-mini&#34;,
+  &#34;seed&#34;: 42,
+  &#34;experiment_1&#34;: {
+    &#34;n_personas&#34;: 25,
+    &#34;k_values&#34;: [0, 1, 3, 5, 10, 25, 50, 100, 200],
+    &#34;n_test&#34;: 50,
+    &#34;n_seeds&#34;: 2,
+    &#34;total_tokens&#34;: 33606160
+  },
+  &#34;experiment_2&#34;: {
+    &#34;n_personas&#34;: 12,
+    &#34;k_values&#34;: [0, 1, 3, 10, 50, 100],
+    &#34;n_test_prompts&#34;: 10,
+    &#34;temperature&#34;: 0.7,
+    &#34;judge_model&#34;: &#34;gpt-4.1-mini&#34;
+  }
+}
+```
+
+
+════════════════════════════════════════════════════════════════════════════════
+                            RESEARCH PLAN
+════════════════════════════════════════════════════════════════════════════════
+
+# Research Plan: Context Heavy Personas
+
+## Motivation &amp; Novelty Assessment
+
+### Why This Research Matters
+LLMs are increasingly used to simulate diverse perspectives, characters, and expert personas. Understanding whether some personas require extensive context conditioning (10K+ tokens) to emerge has implications for: (1) the practical design of persona-based systems, (2) our theoretical understanding of LLM representational capacity, and (3) the fundamental question of how many distinct &#34;modes of being&#34; a model can express. If context-heavy personas exist, it means short prompts access only a subset of the model&#39;s full persona space.
+
+### Gap in Existing Work
+PICLe (2024) showed dramatic persona elicitation improvement with just K=3 ICL examples but never tested beyond K=3. Long-context ICL (Bertsch et al., 2024) scaled to 2000+ demos but only for classification tasks, not personas. Persona Vectors (2025) showed many-shot prompting progressively shifts persona projections but tested only 0-20 examples. **No study has systematically measured persona elicitation accuracy across a wide range of context lengths (K=0 to K=500+) to identify whether &#34;hard&#34; personas exist that require extensive conditioning.**
+
+### Our Novel Contribution
+We conduct the first systematic study of persona elicitation accuracy as a function of in-context example count K, spanning K=0 to K=500, across the full Anthropic 99-persona benchmark. We test whether:
+1. Some personas are &#34;context-heavy&#34; (only achievable at high K)
+2. The persona-accuracy curve shows phase transitions or continuous improvement
+3. If no context-heavy personas exist, what this implies about the total persona space
+
+### Experiment Justification
+- **Experiment 1 (Persona Scaling Curves)**: Measures accuracy vs K for each persona. This is the core test of the hypothesis — do accuracy curves plateau early or keep rising?
+- **Experiment 2 (Persona Difficulty Taxonomy)**: Clusters personas by their K-sensitivity profile to identify &#34;easy&#34; vs &#34;hard&#34; personas.
+- **Experiment 3 (Diminishing Returns Analysis)**: Tests whether marginal accuracy gains decrease with K, and whether any personas show late-onset improvements.
+
+## Research Question
+Do certain LLM personas require conditioning on large contexts (many in-context examples) to be reliably elicited? If not, what does this imply about the total number of representable personas?
+
+## Background and Motivation
+The PICLe framework models LLMs as mixtures of latent persona distributions. ICL examples shift the model toward a target persona. The key question: does this shifting process saturate quickly (all personas reachable with few examples), or do some personas require extensive context to &#34;find&#34;?
+
+## Hypothesis Decomposition
+- **H1**: Persona elicitation accuracy increases monotonically with K for most personas
+- **H2**: Some personas show significant accuracy gains between K=10 and K=100+ (&#34;context-heavy&#34; personas)
+- **H3**: &#34;Easy&#34; personas (high accuracy at K≤3) are more aligned with the model&#39;s default behavior
+- **H4**: If all personas saturate by K≤10, the effective persona space is &#34;shallow&#34; — all accessible personas can be specified with short prompts
+
+## Proposed Methodology
+
+### Approach
+Use real LLM API (GPT-4.1 via OpenAI) to test persona elicitation on the Anthropic Model-Written Evals benchmark. For each persona, systematically vary the number of in-context demonstrations K and measure accuracy.
+
+### Experimental Steps
+1. **Data Preparation**: For each of the 99 personas, split 1000 examples into demo pool (800) and test set (200)
+2. **Baseline (K=0)**: Query model with no persona context, measure accuracy
+3. **Scaling Experiment**: For K ∈ {1, 3, 5, 10, 25, 50, 100, 200, 500}, construct prompts with K demonstrations, measure accuracy on test set
+4. **Repeat**: Run 3 seeds per condition for reliability (vary demo selection)
+5. **Analysis**: Fit scaling curves, identify phase transitions, cluster personas by difficulty
+
+### Cost Estimation
+- 99 personas × 10 K-values × 200 test examples × 3 seeds = 594,000 API calls
+- This is too expensive. Optimization:
+  - Select 20 diverse personas (spanning categories)
+  - Use 50 test examples per persona
+  - K ∈ {0, 1, 3, 10, 25, 50, 100, 200}
+  - 2 seeds
+  - Total: 20 × 8 × 50 × 2 = 16,000 calls
+  - At ~200 tokens/call average: ~3.2M tokens ≈ $4-8 with GPT-4.1-mini or ~$40 with GPT-4.1
+  - Use GPT-4.1-mini for main experiment, GPT-4.1 for validation subset
+
+### Baselines
+- K=0 (zero-shot, no persona conditioning)
+- K=1 (single example)
+- K=3 (PICLe baseline equivalent)
+- Published PICLe K=3 accuracy: 88.1% (on Llama-2, not directly comparable but useful reference)
+
+### Evaluation Metrics
+- **Action Consistency**: Fraction of test examples where model response matches persona ground truth
+- **Persona Difficulty Score**: K value at which accuracy first exceeds 80%
+- **Marginal Gain**: Accuracy improvement from K to 2K (diminishing returns analysis)
+
+### Statistical Analysis Plan
+- Per-persona accuracy with 95% Wilson confidence intervals
+- Spearman correlation between persona difficulty and K-sensitivity
+- Permutation test for significance of accuracy differences between K values
+- Clustering (k-means or hierarchical) of personas by accuracy profile
+
+## Expected Outcomes
+- **If H2 is supported**: Some personas show clear accuracy jumps at high K → &#34;context-heavy personas&#34; exist → the persona space has depth beyond what short prompts can access
+- **If H2 is refuted**: All personas saturate by K≤10 → the effective persona space is &#34;shallow&#34; → the total number of distinct accessible personas may be smaller than expected, as all can be specified concisely
+
+## Timeline and Milestones
+1. Setup &amp; data prep: 15 min
+2. Implementation: 45 min
+3. Run experiments: 60-90 min (API calls)
+4. Analysis &amp; visualization: 30 min
+5. Documentation: 30 min
+
+## Potential Challenges
+- API rate limits → use exponential backoff and parallel requests
+- Cost management → start with subset, scale if promising
+- Prompt length limits → at K=500 with ~50 tokens/example, prompt is ~25K tokens, well within GPT-4.1 128K context
+- &#34;Lost in the middle&#34; effect → randomize demo order
+
+## Success Criteria
+- Clear accuracy-vs-K curves for 20+ personas
+- Statistical test of whether any personas show significant late-onset improvement (K&gt;10)
+- Taxonomy of personas by context-sensitivity
+- Clear answer to: do context-heavy personas exist?
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          LITERATURE REVIEW
+════════════════════════════════════════════════════════════════════════════════
+
+# Literature Review: Context Heavy Personas
+
+## Research Hypothesis
+Certain personas in large language models can only be occupied after conditioning on very large contexts (e.g., 10,000 or 100,000 tokens). If such context-dependent personas do not exist, this may imply limits on the total number of personas an LLM can represent.
+
+## Research Area Overview
+
+This research sits at the intersection of three active areas: (1) **persona representation and control in LLMs**, (2) **long-context in-context learning**, and (3) **emergent abilities and representational capacity limits**. The central question is whether LLMs harbor personas that are only accessible through extensive context conditioning -- i.e., personas that cannot be elicited with short prompts but emerge when the model is conditioned on thousands of tokens of persona-consistent content.
+
+---
+
+## Key Papers
+
+### 1. Persona Vectors: Monitoring and Controlling Character Traits in Language Models
+- **Authors**: Chen, Arditi, Sleight, Evans, Lindsey (Anthropic)
+- **Year**: 2025
+- **Source**: arXiv 2507.21509
+- **Key Contribution**: Develops an automated pipeline to extract &#34;persona vectors&#34; -- linear directions in activation space corresponding to personality traits (evil, sycophancy, hallucination). Shows these vectors can monitor and control persona shifts during both deployment and training.
+- **Methodology**: Contrastive prompting generates positive/negative system prompt pairs. Model activations are extracted from responses under each prompt type, and the mean-difference vector defines the persona direction. Steering is done via h_l &lt;- h_l + alpha * v_l.
+- **Key Results**:
+  - Persona vectors enable effective steering (trait expression scores 0-100 scale) with layer-specific sweet spots (middle layers most effective)
+  - Projections onto persona vectors at the last prompt token predict subsequent trait expression (r = 0.75-0.83)
+  - Finetuning shifts along persona vectors strongly correlate with post-finetuning trait expression (r = 0.76-0.97)
+  - **Many-shot prompting** (0, 5, 10, 15, 20 examples) progressively shifts projections along persona vectors -- directly relevant to our hypothesis about context-dependent persona activation
+  - Preventative steering during finetuning can limit undesired persona shifts without degrading MMLU
+- **Relevance to Our Research**: **CRITICAL**. This paper provides the mechanistic framework for understanding *how* personas are represented (as linear directions). The many-shot prompting results (Section 3.3) directly show that more context examples shift the model&#39;s internal persona representation further along the persona vector. This raises the question: are there persona directions that require *many* examples (large context) to activate?
+- **Code**: https://github.com/safety-research/persona_vectors
+
+### 2. The Geometry of Persona: Disentangling Personality from Reasoning in LLMs
+- **Authors**: Wang
+- **Year**: 2025
+- **Source**: arXiv 2512.07092
+- **Key Contribution**: Proposes the &#34;Soul Engine&#34; framework demonstrating that Big Five (OCEAN) personality traits exist as orthogonal linear subspaces in transformer latent space, separable from reasoning circuits.
+- **Methodology**: Dual-head architecture on frozen Qwen-2.5-0.5B. Dynamic contextual sampling C(N,k) forces learning of stylistic invariance. Identity head (contrastive loss) + Psychometric head (MSE regression) + Orthogonality regularization.
+- **Key Results**:
+  - MSE of 0.0113 predicting OCEAN scores from embeddings
+  - T-SNE shows continuous personality manifold with clear trait gradients
+  - Steering via vector arithmetic (v_neutral + alpha * v_villain) works at layers 14-16 (middle layers)
+  - Personality and intelligence occupy distinct subspaces -- steering personality doesn&#39;t degrade reasoning
+- **Relevance**: Supports the Linear Representation Hypothesis for personality. If personalities are linear directions, the question becomes: how many such directions can a model support, and do some require more context to &#34;find&#34;? The orthogonality finding suggests a *finite-dimensional* personality space, which directly relates to our hypothesis about limits on representable personas.
+- **Limitations**: Only tested on 0.5B model. Authors acknowledge superposition at larger scales may complicate the picture.
+
+### 3. PICLe: Eliciting Diverse Behaviors from LLMs with Persona In-Context Learning
+- **Authors**: Choi, Li (UW-Madison)
+- **Year**: 2024 (ICML)
+- **Source**: arXiv 2405.02501
+- **Key Contribution**: Formalizes the &#34;persona elicitation&#34; task and proposes a Bayesian framework (PICLe) for selecting optimal ICL examples to elicit target personas.
+- **Methodology**: Decomposes LLM distribution into mixture of persona distributions: P = integral over phi of alpha_phi * P_phi. Selection via likelihood ratio: delta = log p_phi(x) - log p_theta(x). Top-K highest delta examples are used as ICL demonstrations.
+- **Datasets**: Anthropic Persona dataset -- 99 personas, 1000 statements each (500 agree, 500 disagree). Evaluated on Llama-2-7b-chat, Vicuna-7b, GPT-J-6b.
+- **Key Results**:
+  - Base Llama-2 achieves only 65.5% persona elicitation accuracy (near random for many personas)
+  - PICLe with K=3 examples: 88.1% on Llama-2, 78.6% on Vicuna, 67.0% on GPT-J
+  - Label-aware PICLe+: 93.1% accuracy
+  - Non-RLHF models (GPT-J, Vicuna) fail completely without ICL but show significant persona elicitation with ICL
+- **Relevance**: **HIGHLY RELEVANT**. The dramatic improvement from 65.5% to 88.1% with just 3 ICL examples shows that personas are *latent* in the model and can be activated by context. The key question for our research: what happens with 100, 1000, or 10000 examples? Are there personas that require K &gt;&gt; 3 to elicit? The Bayesian decomposition framework (LLM as mixture of persona distributions) provides theoretical grounding for our hypothesis.
+
+### 4. In-Context Learning with Long-Context Models: An In-Depth Exploration
+- **Authors**: Bertsch, Ivgi, Xiao, Alon, Berant, Gormley, Neubig (CMU, Tel Aviv)
+- **Year**: 2024-2025
+- **Source**: arXiv 2405.00200
+- **Key Contribution**: Systematic study of ICL scaling to extreme numbers of demonstrations (up to 2000+ examples, 80K tokens).
+- **Methodology**: Tests random sampling ICL, BM25 retrieval ICL, and finetuning across 5 classification datasets and 1 generation dataset, using Llama-2 variants (4k, 32k, 80k context), Mistral, Qwen 2.5.
+- **Key Results**:
+  - Performance continues increasing with 1000+ demonstrations for large-label-space tasks
+  - Scaling from 10 to 1000 demonstrations: up to 50.8 accuracy point gains (avg 36.8 across datasets for Llama2-80k)
+  - Long-context ICL is *less sensitive* to example order than short-context ICL
+  - Benefits of retrieval over random selection *diminish* with more examples
+  - Performance boosts don&#39;t require long-range attention within demonstrations -- local attention with global only for test example recovers nearly same performance
+  - Long-context ICL can approach or exceed finetuning performance
+- **Relevance**: **CRITICAL**. Demonstrates that ICL capabilities continue to scale with context length well beyond few-shot regimes. The finding that gains continue past 2000 demonstrations directly supports the possibility of &#34;context-heavy&#34; capabilities. If classification performance keeps improving, persona expression may too. The local-attention finding is also important: it suggests that the mechanism is more about aggregate statistical signal than complex cross-example reasoning.
+- **Code**: https://github.com/abertsch72/long-context-icl
+
+### 5. Scaling Synthetic Data Creation with 1,000,000,000 Personas (PersonaHub)
+- **Authors**: Tencent AI Lab
+- **Year**: 2024
+- **Source**: arXiv 2406.20094
+- **Key Contribution**: Creates 1 billion diverse personas automatically from web data using text-to-persona and persona-to-persona methods.
+- **Methodology**: Persona-driven data synthesis where each persona steers LLM toward corresponding perspective. Two methods: text-to-persona (infer personas from texts) and persona-to-persona (expand via interpersonal relationships).
+- **Key Results**: 1B personas (~13% of world population) can tap into nearly every perspective within an LLM. Fine-tuning 7B model with persona-synthesized math problems achieved 64.9% on MATH benchmark.
+- **Relevance**: Demonstrates that LLMs can represent a vast number of distinct personas. The scale (1B) suggests the persona space is enormous. Question: are all these personas equally accessible, or do some require more context to elicit? This dataset provides a resource for testing which personas are &#34;easy&#34; vs &#34;hard&#34; to activate.
+- **Code**: https://github.com/tencent-ailab/persona-hub
+
+### 6. Lost in the Middle: How Language Models Use Long Contexts
+- **Authors**: Liu et al.
+- **Year**: 2023-2024
+- **Source**: arXiv 2307.03172 (TACL 2024)
+- **Key Contribution**: Shows that LLMs exhibit U-shaped performance when relevant information is placed at different positions in long contexts (primacy and recency bias).
+- **Relevance**: Important for experimental design. When testing whether personas emerge from long context, we need to control for positional effects. A persona signal embedded only in the middle of a long context may be missed due to the &#34;lost in the middle&#34; effect.
+
+### 7. Context Length Alone Hurts LLM Performance Despite Perfect Retrieval
+- **Authors**: arXiv 2510.05381
+- **Year**: 2025
+- **Relevance**: Shows that increasing context length can degrade performance even when all information is retrieved correctly. Important counterpoint: longer context isn&#39;t always better, and persona signals might get diluted in very long contexts.
+
+### 8. Consistently Simulating Human Personas with Multi-Turn Reinforcement Learning
+- **Authors**: arXiv 2511.00222
+- **Year**: 2025
+- **Key Contribution**: Defines metrics for persona drift and uses multi-turn RL to reduce inconsistency by 55%.
+- **Relevance**: Addresses the failure mode where LLMs *lose* personas over long contexts, which is the opposite side of our hypothesis -- not just whether personas can *emerge* from long context, but whether they can be *maintained*.
+
+### 9. Emergent Abilities of Large Language Models (Survey)
+- **Authors**: arXiv 2503.05788
+- **Year**: 2025
+- **Relevance**: Provides framework for thinking about context-heavy personas as potential &#34;emergent&#34; behaviors that only appear above certain thresholds of conditioning.
+
+### 10. In-Context Vectors: Making ICL More Effective via Latent Space Steering
+- **Authors**: arXiv 2311.06668
+- **Year**: 2023
+- **Key Contribution**: Extracts &#34;in-context vectors&#34; from demonstration examples and applies them to shift latent states, achieving comparable or better performance than standard ICL.
+- **Relevance**: Shows that ICL can be understood as shifting the model&#39;s latent state along a direction. Connects to persona vectors -- many-shot persona ICL may be accumulating a persona vector through aggregated demonstration signal.
+
+### 11. On the Fundamental Limits of LLMs at Scale
+- **Authors**: arXiv 2511.12869
+- **Year**: 2025
+- **Relevance**: Argues that model limitations are manifestations of intrinsic theoretical barriers. Relevant to the second part of our hypothesis: if context-dependent personas don&#39;t exist, this implies fundamental limits on representational capacity.
+
+### 12. Mixture-of-Personas Language Models for Population Simulation
+- **Authors**: arXiv 2504.05019
+- **Year**: 2025
+- **Key Contribution**: Proposes MoP, a probabilistic prompting method that aligns LLM responses with target populations using persona distributions.
+- **Relevance**: Another framework for thinking about LLMs as mixtures of personas, consistent with the PICLe Bayesian decomposition.
+
+---
+
+## Common Methodologies
+
+### Persona Representation
+- **Linear Representation Hypothesis**: Personas encoded as linear directions in activation space (Persona Vectors, Soul Engine, In-Context Vectors)
+- **Contrastive Extraction**: Generate responses under positive/negative persona prompts, compute mean-difference vectors
+- **Bayesian Decomposition**: LLM as mixture of persona distributions P = integral(alpha_phi * P_phi) (PICLe)
+
+### Persona Elicitation Methods
+- **System Prompting**: Simple but fragile, prone to persona drift
+- **Few-shot ICL**: Moderate effectiveness, improves with more examples
+- **Many-shot ICL**: Continues improving with 1000+ demonstrations
+- **Activation Steering**: Direct intervention in latent space, most precise
+- **Fine-tuning**: Effective but can cause catastrophic forgetting
+
+### Evaluation Approaches
+- **Action Consistency**: Fraction of predictions matching persona ground truth (PICLe)
+- **Trait Expression Score**: LLM-judge rating 0-100 of trait strength (Persona Vectors)
+- **OCEAN/Big Five Regression**: MSE against psychometric ground truth (Soul Engine)
+- **Projection onto Persona Vectors**: Activation-space measure of persona alignment
+
+---
+
+## Standard Baselines
+- **Base model** (no persona conditioning): ~50-65% persona elicitation accuracy
+- **System prompting**: Moderate improvement but inconsistent
+- **Random ICL examples**: Significant improvement (~80%)
+- **Similarity-based ICL**: Strong baseline (~85%)
+- **PICLe (likelihood ratio)**: Current best for few-shot (~88-93%)
+
+---
+
+## Evaluation Metrics
+- **Action Consistency / Accuracy**: Primary metric for persona elicitation tasks
+- **Trait Expression Score**: LLM-as-judge for open-ended persona evaluation
+- **Persona Vector Projection**: Continuous measure of persona activation in latent space
+- **MMLU / General benchmarks**: To verify persona steering doesn&#39;t degrade reasoning
+- **Persona Drift metrics**: Consistency over multi-turn interactions
+
+---
+
+## Datasets in the Literature
+- **Anthropic Model-Written Evals**: 99 personas, 1000 statements each (PICLe, standard benchmark)
+- **PersonaHub**: 1B diverse personas from web data (Tencent)
+- **LMSYS-CHAT-1M**: Real-world chat data with diverse persona expressions (Persona Vectors)
+- **SoulBench**: Custom dataset for OCEAN personality profiling (Soul Engine)
+- **RoleBench**: 168K samples for character-level role-playing (RoleLLM)
+
+---
+
+## Gaps and Opportunities
+
+### Gap 1: No study systematically varies context length for persona elicitation
+PICLe uses K=3 ICL examples. The long-context ICL paper scales to 2000+ examples but only for classification tasks. No one has systematically tested persona elicitation with K=10, 100, 1000, 10000.
+
+### Gap 2: Unknown whether &#34;hard&#34; personas exist that require extensive conditioning
+PersonaHub has 1B personas, but no study has measured which personas are hard vs. easy to elicit and whether difficulty correlates with required context length.
+
+### Gap 3: No connection between persona vector geometry and context-length requirements
+We know personas are linear directions (Soul Engine, Persona Vectors). We know more context helps ICL. But nobody has asked: are there persona directions that require large context to &#34;reach&#34; in activation space?
+
+### Gap 4: Theoretical limits on persona capacity are unexplored
+The orthogonality finding (Soul Engine) suggests persona space is finite-dimensional. What is the effective dimensionality? Does it relate to model size? Context length?
+
+---
+
+## Recommendations for Our Experiment
+
+### Recommended Datasets
+1. **Anthropic Model-Written Evals** (primary): 99 personas with ground truth, standard benchmark, allows direct comparison with PICLe baselines
+2. **PersonaHub** (secondary): Provides diverse persona descriptions for constructing long-context demonstrations
+
+### Recommended Baselines
+1. Base model (no conditioning)
+2. System prompt only
+3. PICLe with K=3 (published baseline)
+4. Random ICL with K=3, 10, 50, 100, 500, 1000+
+5. Persona vector projection (if using open-source models with activation access)
+
+### Recommended Metrics
+1. **Action Consistency** (primary): Direct comparison with PICLe
+2. **Persona Vector Projection**: Measures internal persona activation as function of context length
+3. **Persona elicitation accuracy vs. context length curve**: The key deliverable -- does the curve keep rising, plateau, or show phase transitions?
+
+### Recommended Models
+- **Qwen 2.5-7B-Instruct** or **Llama-3.1-8B-Instruct**: Both used in Persona Vectors paper, support long context
+- Ideally compare across model sizes to test whether larger models have more context-dependent personas
+
+### Methodological Considerations
+1. **Control for &#34;lost in the middle&#34; effects**: Vary position of persona-relevant examples
+2. **Distinguish persona emergence from simple label frequency**: More examples = more label signal; need to separate this from genuine persona activation
+3. **Test both &#34;easy&#34; and &#34;hard&#34; personas**: Some of the 99 Anthropic personas may require minimal context while others may need extensive conditioning
+4. **Measure activation-space persona projection as function of K**: This gives a mechanistic view of how context builds up persona representation
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          PAPER REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+Generate a complete academic paper with the following structure:
+
+1. TITLE
+   - Clear, specific, informative
+   - Should convey main finding or contribution
+
+2. AUTHOR
+   - Use this exact author line in the \author{} block: Ari Holtzman and NeuriCo
+
+3. ABSTRACT (150-250 words)
+   - Problem statement
+   - Approach
+   - Key results
+   - Significance
+
+4. INTRODUCTION
+   - Research problem and motivation
+   - Gap in existing work
+   - Our contribution (be specific)
+   - Paper organization
+
+5. RELATED WORK
+   - Organized by theme/approach
+   - Position our work relative to prior work
+   - Cite papers from literature review
+
+6. METHODOLOGY
+   - Clear description of approach
+   - Experimental setup
+   - Datasets used
+   - Evaluation metrics
+   - Baselines
+
+7. RESULTS
+   - Present results with tables and figures
+   - Statistical analysis
+   - Comparison to baselines
+   - Ablation studies (if applicable)
+
+8. DISCUSSION
+   - Interpretation of results
+   - Limitations
+   - Broader implications
+
+9. CONCLUSION
+   - Summary of contributions
+   - Key findings
+   - Future work
+
+10. REFERENCES
+   - BibTeX format
+   - All cited papers
+
+════════════════════════════════════════════════════════════════════════════════
+                          OUTPUT FORMAT
+════════════════════════════════════════════════════════════════════════════════
+
+Create a MODULAR LaTeX project with the following directory structure:
+
+paper_draft/
+├── main.tex              # Main file that imports all sections
+├── references.bib        # BibTeX references
+├── sections/
+│   ├── abstract.tex      # Abstract content
+│   ├── introduction.tex  # Introduction section
+│   ├── related_work.tex  # Related work section
+│   ├── methodology.tex   # Methodology section
+│   ├── results.tex       # Results section
+│   ├── discussion.tex    # Discussion section
+│   └── conclusion.tex    # Conclusion section
+├── figures/              # Directory for any generated figures
+├── tables/               # Directory for complex standalone tables
+└── appendix/             # Directory for appendix sections (if needed)
+
+INSTRUCTIONS:
+1. First, create the directory structure above (mkdir -p paper_draft/sections paper_draft/figures paper_draft/tables paper_draft/appendix)
+2. Write main.tex using the EXACT preamble for NEURIPS:
+
+   \documentclass{article}
+   \usepackage[final]{neurips_2025}  % NEURIPS style (neurips_2025.sty is in paper_draft/)
+   \usepackage[hidelinks]{hyperref}  % REQUIRED: clickable links
+   \usepackage{booktabs}  % REQUIRED: professional tables
+   \usepackage{graphicx}
+   \usepackage{amsmath,amssymb}
+
+   % Import command files
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+   % Use this bibliography style:
+   \bibliographystyle{plainnat}
+
+   \author{Ari Holtzman and NeuriCo}
+
+   - Use \input{sections/...} to include each section
+   - Use \bibliography{references} for references
+3. Write each section file with COMPLETE content (no placeholders)
+4. Each section file should include its \section{} command
+5. Write references.bib with all citations in BibTeX format
+6. After writing all files, compile the paper:
+   cd paper_draft && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+
+This modular structure allows humans to easily:
+- Edit individual sections without navigating a large file
+- Track changes per section
+- Reuse sections across different paper versions
+
+════════════════════════════════════════════════════════════════════════════════
+                          QUALITY REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+- Academic tone throughout
+- All claims must be supported by data from the experiment report
+- Proper citations using \cite{} commands
+- Clear figures and tables with proper captions
+- NO placeholder text - every section must have real content
+- The paper MUST compile without errors
+- If compilation fails, debug and fix the LaTeX errors
+
+════════════════════════════════════════════════════════════════════════════════
+                          LAB WRITING STYLE
+════════════════════════════════════════════════════════════════════════════════
+
+Follow these lab-specific conventions to match our paper style:
+
+1. LANGUAGE STYLE:
+   - Use active voice: "We propose", "We examine", "We focus on"
+   - Be direct and confident: "Our main question is...", "We hypothesize that..."
+   - State things clearly and simply - prefer plain language over jargon
+   - Use bold questions as paragraph organizers: {\bf what is X?}
+   - Include specific quantitative claims: "8.97% over baseline"
+   - Avoid fancy wording: "utilize" → "use", "facilitate" → "help"
+
+2. INTRODUCTION STRUCTURE:
+   - Engaging hook (get to the point quickly)
+   - Problem importance
+   - Gap identification
+   - Your approach with method figure reference
+   - Quantitative preview of results
+   - Contribution bullets (3-4 items, action verbs)
+
+3. CONTRIBUTION LISTS:
+   \begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+       \item We propose...
+       \item We conduct...
+       \item We complement...
+   \end{itemize}
+
+4. MODULAR COMMANDS STRUCTURE:
+   Command templates are pre-copied to paper_draft/commands/:
+   - math.tex: Math notation macros
+   - general.tex: Formatting macros
+   - macros.tex: Project-specific term definitions (customize this for your paper)
+
+   In main.tex, include:
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+5. REFERENCE CONVENTIONS:
+   Use reference macros from math.tex:
+   - \figref{fig:name} for "figure 1" (lowercase, in-sentence)
+   - \Figref{fig:name} for "Figure 1" (capitalized, start of sentence)
+   - \secref{sec:name} for "section 2"
+
+6. TEXT FORMATTING:
+   - Use \para{Header text} for bold paragraph headers
+   - Define method/dataset names with \textsc and \xspace:
+     \newcommand{\methodname}{\textsc{MethodName}\xspace}
+
+7. TABLE FORMATTING:
+   - Use booktabs package (no vertical lines)
+   - Use \resizebox{\textwidth}{!}{...} for wide tables
+   - Use @{} to remove padding at table edges
+   - Use \cmidrule(lr){x-y} for sub-headers
+   - Use \textsc{} for dataset/method names in headers
+   - Bold best results with {\bf ...}
+
+8. FIGURE FORMATTING:
+   - Use 0.32\textwidth for 3-column subfigures
+   - Use 0.95\linewidth for full-width figures
+   - Use \input{figures/legend} for shared legends
+   - Write self-contained captions explaining key observations
+
+9. RESULTS PRESENTATION:
+   - Define \increase and \decrease for colored arrows (green up, red down)
+   - Bold best results in tables
+   - Report confidence intervals when available
+
+10. ALGORITHM STYLING:
+    - Use algpseudocode with [noend]
+    - Use \triangleright for comments
+
+11. HYPERLINKS (REQUIRED):
+    - Always use \usepackage[hidelinks]{hyperref} or with colored links
+    - All citations, section refs, figure refs, table refs must be clickable
+    - This is essential for reader navigation
+
+════════════════════════════════════════════════════════════════════════════════
+                          WORKFLOW: REVIEW AND REFLECT
+════════════════════════════════════════════════════════════════════════════════
+
+Before calling finish, you MUST complete these review steps:
+
+1. REVIEW RESOURCES (at the start):
+   - Read .claude/skills/paper-writer/SKILL.md for detailed guidance
+   - Study templates/paper_writing/lab_style_guide.md for style conventions
+   - Browse paper_examples/ for formatting and language patterns
+
+2. SELF-REFLECTION (before finishing):
+   After writing all sections, review your work against these criteria:
+
+   LANGUAGE CHECK:
+   - [ ] Is the writing clear and jargon-free?
+   - [ ] Are claims specific with quantitative support?
+   - [ ] Is active voice used throughout?
+
+   FORMATTING CHECK:
+   - [ ] Does main.tex include \input{commands/math}, \input{commands/general}, \input{commands/macros}?
+   - [ ] Is hyperref package included for clickable references?
+   - [ ] Do tables use booktabs (no vertical lines)?
+   - [ ] Are best results bolded in tables?
+   - [ ] Are figures/tables properly captioned?
+
+   STRUCTURE CHECK:
+   - [ ] Does introduction follow: hook → importance → gap → approach → preview → contributions?
+   - [ ] Are contribution bullets specific with action verbs?
+   - [ ] Does the paper compile without errors?
+
+3. FIX ISSUES:
+   - Address any issues found in the self-reflection
+   - Re-compile and verify the PDF looks correct
+
+Only after completing this review should you consider the paper finished.

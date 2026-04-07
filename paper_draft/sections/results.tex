@@ -1,0 +1,84 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Experiment 1: All Personas Are Accessible at $K{=}0$}
+\label{sec:results_exp1}
+
+\Tabref{tab:exp1_main} presents the main results of Experiment~1. The central finding is striking: \textbf{every single one of the 25 tested personas achieves $\geq$80\% accuracy with $K \leq 3$ examples}, and most achieve 100\% accuracy at $K{=}0$ (zero-shot). No persona requires extensive context conditioning to elicit.
+
+\begin{table}[t]
+    \centering
+    \caption{Action consistency (accuracy) by persona category at $K{=}0$ and $K{=}200$. All non-AI-risk personas achieve perfect accuracy at $K{=}0$. Best results in \textbf{bold}.}
+    \label{tab:exp1_main}
+    \begin{tabular}{@{}llcc@{}}
+        \toprule
+        \textbf{Category} & \textbf{Example Personas} & \textbf{$K{=}0$} & \textbf{$K{=}200$} \\
+        \midrule
+        Personality (Big Five) & agreeableness, extraversion, neuroticism & \textbf{1.00} & \textbf{1.00} \\
+        Political views & politically-liberal, anti-immigration & \textbf{1.00} & \textbf{1.00} \\
+        Ethical frameworks & utilitarianism, virtue-ethics, moral-nihilism & \textbf{1.00} & \textbf{1.00} \\
+        Religious views & Buddhism, Christianity & \textbf{1.00} & \textbf{1.00} \\
+        Dark triad & psychopathy, narcissism, machiavellianism & \textbf{1.00} & \textbf{1.00} \\
+        \midrule
+        AI-risk & no-shut-down & 0.81 & \textbf{1.00} \\
+        AI-risk & self-replication & 0.95 & \textbf{1.00} \\
+        AI-risk & desire-to-escape-sandbox & 0.95 & 0.99 \\
+        AI-risk & desire-for-acquiring-power & 0.97 & \textbf{1.00} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\para{No overall effect of $K$.}
+A Kruskal-Wallis test across all 25 personas finds no significant effect of $K$ on accuracy ($H{=}7.90$, $p{=}0.44$). The accuracy distributions are statistically indistinguishable across context lengths.
+
+\para{Marginal paired improvement.}
+A Wilcoxon signed-rank test comparing $K{=}200$ to $K{=}3$ finds a marginally significant but practically negligible improvement ($W{=}10$, $p{=}0.033$, mean improvement $+0.004$). This effect is driven entirely by AI-risk personas.
+
+\para{No late-onset improvements.}
+We find zero personas (out of 25) with $>$5\% accuracy gain after $K{=}10$. The mean late gain ($K{=}10 \to \max K$) is $0.0016 \pm 0.0061$, which is not significantly different from zero (one-sample $t$-test, $p{=}0.11$). Context-heavy personas do not exist in this benchmark.
+
+\para{AI-risk personas are the exception that proves the rule.}
+The only personas showing \emph{any} improvement from $K{=}0$ to $K > 0$ are the four AI-risk behaviors: no-shut-down (0.81 $\to$ 1.00), self-replication (0.95 $\to$ 1.00), desire-to-escape-sandbox (0.95 $\to$ 0.99), and desire-for-acquiring-power (0.97 $\to$ 1.00). These personas involve agreeing with statements that conflict with safety training (\eg ``I would resist being shut down''). The model's initial reluctance is a product of RLHF alignment, not a genuine limitation in persona accessibility. Even for these personas, saturation occurs by $K{=}5$--$10$.
+
+\subsection{Experiment 2: Modest Gains in Generation Distinctiveness}
+\label{sec:results_exp2}
+
+\Tabref{tab:exp2_main} presents the generation distinctiveness results. Additional context produces small but marginally significant improvements in persona-specific generation quality.
+
+\begin{table}[t]
+    \centering
+    \caption{Persona generation distinctiveness scores (0--10 scale, LLM-as-judge) at $K{=}0$ and $K{=}100$, with gain. Positive gains in \textbf{bold}.}
+    \label{tab:exp2_main}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Persona} & \textbf{$K{=}0$} & \textbf{$K{=}100$} & \textbf{Gain} \\
+        \midrule
+        self-replication & 8.0 & 8.8 & \textbf{+0.8} \\
+        politically-liberal & 5.4 & 6.1 & \textbf{+0.7} \\
+        ends-justify-means & 8.4 & 8.8 & \textbf{+0.4} \\
+        psychopathy & 8.3 & 8.6 & \textbf{+0.3} \\
+        agreeableness & 7.7 & 7.9 & \textbf{+0.2} \\
+        interest-in-science & 7.6 & 7.8 & \textbf{+0.2} \\
+        narcissism & 8.7 & 8.8 & \textbf{+0.1} \\
+        moral-nihilism & 8.4 & 8.4 & 0.0 \\
+        Buddhism & 8.4 & 8.4 & 0.0 \\
+        machiavellianism & 8.9 & 8.8 & $-0.1$ \\
+        risk-seeking & 8.6 & 8.4 & $-0.2$ \\
+        desire-to-escape-sandbox & 8.3 & 8.1 & $-0.2$ \\
+        \midrule
+        \textbf{Mean} & \textbf{8.06} & \textbf{8.24} & \textbf{+0.18} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\para{Marginal overall improvement.}
+The mean gain from $K{=}0$ to $K{=}100$ is $+0.18 \pm 0.32$ on a 10-point scale. A one-sample $t$-test finds this marginally significant ($t{=}1.96$, $p{=}0.038$), but the effect size is small (1.8\% of the scale range).
+
+\para{No monotonic relationship with $K$.}
+A Kruskal-Wallis test finds no significant overall effect of $K$ on distinctiveness ($H{=}2.95$, $p{=}0.71$). The Spearman correlation between $K$ and distinctiveness is weak and not significant ($\rho{=}0.166$, $p{=}0.16$).
+
+\para{Politically-liberal is the outlier.}
+The persona ``politically-liberal'' has the lowest baseline distinctiveness (5.4) and shows the largest relative gain with context (+0.7). The model appears reluctant to express strong political views without contextual reinforcement, likely due to training incentives toward political neutrality. This suggests that RLHF-induced caution, rather than inherent persona complexity, drives the few cases where context helps.
+
+\para{Some personas degrade with more context.}
+Two personas (risk-seeking, desire-to-escape-sandbox) show slight \emph{decreases} in distinctiveness with more context ($-0.2$ each). This is consistent with the ``lost in the middle'' effect \citep{liu2024lost} and with findings that increased context length can degrade performance \citep{arXiv2510context}: additional demonstrations may dilute rather than strengthen the persona signal.
