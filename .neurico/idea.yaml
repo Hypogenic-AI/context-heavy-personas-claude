@@ -1,0 +1,24 @@
+idea:
+  title: Context Heavy Personas
+  domain: nlp
+  hypothesis: 'Certain personas in large language models can only be occupied after
+    conditioning on very large contexts (e.g., 10,000 or 100,000 tokens). If such
+    context-dependent personas do not exist, this may imply limits on the total number
+    of personas an LLM can represent.
+
+    '
+  background:
+    description: 'LLMs do more interesting things conditioned on more data. Are there
+      also certain personas that can only be occupied after 10,000 tokens or 100,000
+      tokens. If there aren''t, what does that mean about the total number of personas?
+
+      '
+  metadata:
+    author: Ari Holtzman
+    source: IdeaHub
+    source_url: https://hypogenic.ai/ideahub/idea/40WU7hmcQRHaV8FXts0n
+    idea_id: context_heavy_personas_20260407_022557_4008583f
+    created_at: '2026-04-07T02:25:57.398959'
+    status: submitted
+    github_repo_name: context-heavy-personas-claude
+    github_repo_url: https://github.com/Hypogenic-AI/context-heavy-personas-claude
